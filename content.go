@@ -51,7 +51,14 @@ func zipContent(args []string) (string, error) {
 		if f.IsDir() == true {
 			zip.AddAll(item, true)
 		} else {
-			zip.AddFile(item)
+			file, err := os.Open(item)
+			if err != nil{
+				return "", err
+			}
+			info, err := file.Stat()
+			if err := zip.Add(item, file, info); err != nil{
+				return "", err
+			}
 		}
 	}
 	if err := zip.Close(); err != nil {
